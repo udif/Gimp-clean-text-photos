@@ -3,7 +3,7 @@
 This plugin is used to clean text scans that were taken with a camera, not a scanner.
 Typical text scans of this kind suffers from uneven lighting and curled pages that cause more light reflections.
 
-## How the plugin works
+## How does the plugin works
 The plugin starts by turning the selected area into a geryscale image using the same formula as Colors/Desaturate/Luminosity tool.
 The plugin then works by dividing the photo into small blocks, and process each block inddependently.
 Theer are two parameters defining those blocks.
@@ -28,13 +28,14 @@ We then clear to white every pixel larger than the threshold.
 # TODO
 The algorithm works well on 95% of the images I wrote it for, but fails on large foreground areas
 I have a few more ideas to tweak it.
-Also need to add  a GUI to control such parameter as kernel_size and inner_size.
+Also need to add  a GUI to control such parameter as kernel_size and inner_size, as well as internal thresholds and tweak values.
 
 Useful links:
-[How to configure gtk on Visual studio 2010](http://stackoverflow.com/questions/15906580/how-to-configure-gtk-on-visual-studio-2010)
-[MakeDef : Intelligent DEF file Generator for Win32 Apps](http://www.codeguru.com/tools/standalonetools/article.php/c1351/MakeDef--Intelligent-DEF-file-Generator-for-Win32-Apps.htm)
-[How to build a GIMP plug-in with Visual Studio](http://web.archive.org/web/20150906090521/http://registry.gimp.org/node/24883)
-[Visual Studio 2015 Compiler options](https://msdn.microsoft.com/en-us/library/9s7c9wdw.aspx)
-[Writing a GIMP Plug-In](https://www.gimp.org/docs/plug-in/plug-in.html)
-[How to write a GIMP Plug-In](https://developer.gimp.org/writing-a-plug-in/1/index.html)
-[GIMP Scripts and Plug-ins](http://gimpbook.com/scripting/slides30/)
+[How to configure gtk on Visual studio 2010](http://stackoverflow.com/questions/15906580/how-to-configure-gtk-on-visual-studio-2010)  
+[MakeDef : Intelligent DEF file Generator for Win32 Apps](http://www.codeguru.com/tools/standalonetools/article.php/c1351/MakeDef--Intelligent-DEF-file-Generator-for-Win32-Apps.htm)  
+[How to build a GIMP plug-in with Visual Studio](http://web.archive.org/web/20150906090521/http://registry.gimp.org/node/24883)  
+[Visual Studio 2015 Compiler options](https://msdn.microsoft.com/en-us/library/9s7c9wdw.aspx)  
+[Writing a GIMP Plug-In](https://www.gimp.org/docs/plug-in/plug-in.html)  
+[How to write a GIMP Plug-In](https://developer.gimp.org/writing-a-plug-in/1/index.html)  
+[GIMP Scripts and Plug-ins](http://gimpbook.com/scripting/slides30/)  
+
