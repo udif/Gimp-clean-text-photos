@@ -1,0 +1,7 @@
+**/Debug/*
+**/ipch/*
+fix-text-bg/*
+**/*.db
+**/*.sln
+stdafx.h
+
