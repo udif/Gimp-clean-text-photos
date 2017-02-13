@@ -30,7 +30,7 @@ The algorithm works well on 95% of the images I wrote it for, but fails on large
 I have a few more ideas to tweak it.
 Also need to add  a GUI to control such parameter as kernel_size and inner_size, as well as internal thresholds and tweak values.
 
-Useful links:
+## Useful links:
 [How to configure gtk on Visual studio 2010](http://stackoverflow.com/questions/15906580/how-to-configure-gtk-on-visual-studio-2010)  
 [MakeDef : Intelligent DEF file Generator for Win32 Apps](http://www.codeguru.com/tools/standalonetools/article.php/c1351/MakeDef--Intelligent-DEF-file-Generator-for-Win32-Apps.htm)  
 [How to build a GIMP plug-in with Visual Studio](http://web.archive.org/web/20150906090521/http://registry.gimp.org/node/24883)  
