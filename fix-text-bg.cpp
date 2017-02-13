@@ -145,7 +145,11 @@ void	fix_text_bg(GimpDrawable *drawable, PluginVals *v, GimpPreview  *preview)
 		gimp_pixel_rgn_set_rect(&rgnDst, &buf[0], x1, y1, width, height);
 	}
 
-	gimp_drawable_flush(drawable);
-	gimp_drawable_merge_shadow(drawable->drawable_id, true);
-	gimp_drawable_update(drawable->drawable_id, x1, y1, width, height);
+	if (preview) {
+		gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview), &rgnDst);
+	} else {
+		gimp_drawable_flush(drawable);
+		gimp_drawable_merge_shadow(drawable->drawable_id, true);
+		gimp_drawable_update(drawable->drawable_id, x1, y1, width, height);
+	}
 }

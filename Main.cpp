@@ -119,6 +119,11 @@ static dialog_params fix_text_bg_params[] = {
 
 #define PNUM (sizeof(fix_text_bg_params)/sizeof(fix_text_bg_params[0]))
 
+static void fix_text_bg_preview(GimpDrawable *drawable, GtkWidget *preview)
+{
+	fix_text_bg(drawable, &vals, GIMP_PREVIEW(preview));
+}
+
 static gboolean fix_txt_bg_dialog (GimpDrawable *drawable)
 {
 	GtkWidget *dialog;
@@ -133,7 +138,6 @@ static gboolean fix_txt_bg_dialog (GimpDrawable *drawable)
 	gboolean   run;
 	int x1, y1, x2, y2;
 
-	g_message(PLUGIN_SHORT_NAME);
 	gimp_ui_init ("Fix-Text-Bg" DBG_SUFFIX, FALSE);
 
 #ifdef GIMP_DEBUG
@@ -159,9 +163,9 @@ static gboolean fix_txt_bg_dialog (GimpDrawable *drawable)
 	gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), main_vbox);
 	gtk_widget_show (main_vbox);
 
-	//preview = gimp_drawable_preview_new (drawable, &vals.preview);
-	//gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
-	//gtk_widget_show (preview);
+	preview = gimp_drawable_preview_new (drawable, &vals.preview);
+	gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
+	gtk_widget_show (preview);
 
 	for (int i = 0; i < 3; i++) {
 		frame[i] = gimp_frame_new (fix_text_bg_params[i].name);
@@ -191,14 +195,13 @@ static gboolean fix_txt_bg_dialog (GimpDrawable *drawable)
 		gtk_box_pack_start (GTK_BOX (main_hbox[i]), spinbutton[i], FALSE, FALSE, 0);
 		gtk_widget_show (spinbutton[i]);
 
-	#if 0
 		g_signal_connect_swapped (preview, "invalidated",
-								  G_CALLBACK (fix_text_bg),
+								  G_CALLBACK (fix_text_bg_preview),
 								  drawable);
-		g_signal_connect_swapped (spinbutton_adj, "value_changed",
+		g_signal_connect_swapped (spinbutton_adj[i], "value_changed",
 								  G_CALLBACK (gimp_preview_invalidate),
 								  preview);
-	#endif
+
 		g_signal_connect (spinbutton_adj[i], "value_changed",
 						  G_CALLBACK (gimp_int_adjustment_update),
 						  fix_text_bg_params[i].default_val);
@@ -207,7 +210,7 @@ static gboolean fix_txt_bg_dialog (GimpDrawable *drawable)
 
 	run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
-	//fix_text_bg (drawable, GIMP_PREVIEW (preview));
+	fix_text_bg (drawable, &vals, GIMP_PREVIEW (preview));
 
 	gtk_widget_destroy (dialog);
 
