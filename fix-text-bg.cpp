@@ -34,7 +34,6 @@ void	fix_text_bg(GimpDrawable *drawable, PluginVals *v, GimpPreview  *preview)
 	const int kernel_size = v->kernel_size;
 	const int inner_size = v->inner_size;
 	const int inner_step = 2 * inner_size + 1;
-	const int kernel_area = (kernel_size * 2 + 1) * (kernel_size * 2 + 1);
 	// Desaturate first, using "Luminocity" algorithm
 	// store it in the red channel only, because we'll modify it anyhow
 	if (channels >= 3) {
@@ -53,22 +52,27 @@ void	fix_text_bg(GimpDrawable *drawable, PluginVals *v, GimpPreview  *preview)
 	}
 
 	// Now, do your work
-	for (int y = kernel_size; y < height - kernel_size; y += inner_step) {
-		for (int x = kernel_size; x < width - kernel_size; x += inner_step) {
+	for (int y = inner_size; y < height + inner_size; y += inner_step) {
+		for (int x = inner_size; x < width + inner_size; x += inner_step) {
+			int minx = max(0, x - kernel_size);
+			int maxx = min(width - 1, x + kernel_size);
+			int miny = max(0, y - kernel_size);
+			int maxy = min(height - 1, y + kernel_size);
+			const int kernel_area =	(maxx - minx + 1) *	(maxy - miny + 1);
 			memset(hist, 0, sizeof(hist));
 			int avg_val = 0;
 			if (grey) {
-				for (int dy = -kernel_size; dy <= kernel_size; dy++) {
-					for (int dx = -kernel_size; dx <= kernel_size; dx++) {
-						BYTE &val = *(BYTE *)&buf[(width * (y + dy) + x + dx)];
+				for (int ystep = miny; ystep <= maxy; ystep++) {
+					for (int xstep = minx; xstep <= maxx; xstep++) {
+						BYTE &val = *(BYTE *)&buf[(width * ystep + xstep)];
 						hist[val]++;
 						avg_val += val;
 					}
 				}
 			} else {
-				for (int dy = -kernel_size; dy <= kernel_size; dy++) {
-					for (int dx = -kernel_size; dx <= kernel_size; dx++) {
-						UINT32 &pixel = *(UINT32 *)&buf[channels * (width * (y + dy) + x + dx)];
+				for (int ystep = miny; ystep <= maxy; ystep++) {
+					for (int xstep = minx; xstep <= maxx; xstep++) {
+						UINT32 &pixel = *(UINT32 *)&buf[channels * (width * ystep + xstep)];
 						BYTE &val = ((BYTE *)&pixel)[0];
 						hist[val]++;
 						avg_val += val;
@@ -95,17 +99,21 @@ void	fix_text_bg(GimpDrawable *drawable, PluginVals *v, GimpPreview  *preview)
 			}
 
 			// If avg_val is higher than peak it means that the peak is the darker characters
-			// Increase threshold to prevent earsing characters
+			// Increase threshold to prevent erasing characters
 			if (max_idx < avg_val)
 				bg_thresh = avg_val;
 			// Write result in g,b
 			bg_thresh += v->thresh_adjust;
 
+			minx = max(0, x - inner_size);
+			maxx = min(width - 1, x + inner_size);
+			miny = max(0, y - inner_size);
+			maxy = min(height - 1, y + inner_size);
 			if (grey) {
-				for (int dy = -inner_size; dy <= inner_size; dy++) {
-					for (int dx = -inner_size; dx <= inner_size; dx++) {
-						BYTE &val = *(BYTE *)&buf[(width * (y + dy) + x + dx)];
-						BYTE &valout = *(BYTE *)&bufout[(width * (y + dy) + x + dx)];
+				for (int ystep = miny; ystep <= maxy; ystep++) {
+					for (int xstep = minx; xstep <= maxx; xstep++) {
+						BYTE &val = *(BYTE *)&buf[(width * ystep + xstep)];
+						BYTE &valout = *(BYTE *)&bufout[(width * ystep + xstep)];
 						if (val > bg_thresh) {
 							valout = 255;
 						} else {
@@ -114,9 +122,9 @@ void	fix_text_bg(GimpDrawable *drawable, PluginVals *v, GimpPreview  *preview)
 					}
 				}
 			} else {
-				for (int dy = -inner_size; dy <= inner_size; dy++) {
-					for (int dx = -inner_size; dx <= inner_size; dx++) {
-						UINT32 &pixel = *(UINT32 *)&buf[channels * (width * (y + dy) + x + dx)];
+				for (int ystep = miny; ystep <= maxy; ystep++) {
+					for (int xstep = minx; xstep <= maxx; xstep++) {
+						UINT32 &pixel = *(UINT32 *)&buf[channels * (width * ystep + xstep)];
 						BYTE	&r = ((BYTE *)&pixel)[0];
 						BYTE	&g = ((BYTE *)&pixel)[1];
 						if (r > bg_thresh) {
